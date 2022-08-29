@@ -21,11 +21,11 @@
             {{ todo.content }}
           </div>
           <div class="todo-actions buttons">
-            <button class="button is-small is-primary is-light" :class="todo.done ? 'is-success' : 'is-light'"
+            <button class="button is-small is-light " :class="todo.done ? 'is-success' : 'is-light'"
               @click="toggleDone(todo.id)">
               &check;
             </button>
-            <button @click="deleteTodo(todo.id)" class="button is-small is-danger is-light ml-2">
+            <button @click="deleteTodo(todo.id)" class="button is-small is-danger ml-2">
               &cross;
             </button>
           </div>
