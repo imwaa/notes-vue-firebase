@@ -1,6 +1,6 @@
 # vue3-firebase
 
-This template should help get you started developing with Vue 3 in Vite.
+![image](https://user-images.githubusercontent.com/69726409/187196706-015c44f7-24e8-4718-8497-c968e96fdd34.png)
 
 ## Recommended IDE Setup
 
