@@ -58,9 +58,8 @@
 <script setup>
 
 import { ref, onMounted } from 'vue';
-import { v4 as uuidv4 } from 'uuid';
 import { db } from '@/firebase'
-import { collection, getDocs } from "firebase/firestore";
+import { collection, onSnapshot, addDoc } from "firebase/firestore";
 
 const newTodo = ref('')
 
@@ -69,34 +68,31 @@ const todoLists = ref([
 
 
 // Get todos from firebase
-onMounted(async () => {
-  const querySnapshot = await getDocs(collection(db, "todos"));
-  let fbTodos = []
-  querySnapshot.forEach((doc) => {
-    console.log(doc.data());
-    const todo = {
-      id: doc.id,
-      content: doc.data().content,
-      done: doc.data().done
-    }
-    fbTodos.push(todo)
-  });
-  todoLists.value = fbTodos
+onMounted(() => {
+  onSnapshot(collection(db, "todos"), (querySnapshot) => {
+    const fbTodos = [];
+    querySnapshot.forEach((doc) => {
+      const todo = {
+        id: doc.id,
+        content: doc.data().content,
+        done: doc.data().done
+      }
+      fbTodos.push(todo)
+    });
+    todoLists.value = fbTodos
+  })
 })
 
 // Add todo to firebase
 const addTodo = () => {
-  const newTodo = {
-    id: uuidv4(),
+  addDoc(collection(db, "todos"), {
     content: newTodo.value,
     done: false
-  }
-  todoLists.value.unshift(newTodo)
+  });
   newTodo.value = ''
 }
 
-
-//delete todo
+// delete todo from firebase
 const deleteTodo = id => {
   todoLists.value = todoLists.value.filter(todo => {
     todo.id !== id
@@ -109,8 +105,6 @@ const toggleDone = id => {
   const index = todoLists.value.findIndex(todo => todo.id === id)
   todoLists.value[index].done = !todoLists.value[index].done
 }
-
-
 
 
 </script>
