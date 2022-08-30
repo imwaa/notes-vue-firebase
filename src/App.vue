@@ -4,21 +4,21 @@
     <form @submit.prevent="addTodo">
       <div class="field is-grouped mb-5">
         <p class="control is-expanded">
-          <input v-model="newTodoContent" class="input" type="text" placeholder="Ajouter une tache">
+          <input v-model="newTodo" class="input" type="text" placeholder="Ajouter une tache">
         </p>
         <p class="control">
-          <button class="button is-primary" :disabled="!newTodoContent">
+          <button class="button is-primary" :disabled="!newTodo">
             Ajouter
           </button>
         </p>
       </div>
     </form>
 
-    <div v-for="todo in todos" class="card mb-5" :class="{ 'has-background-success-light': todo.done }">
+    <div v-for="todo in todoLists" class="card mb-5" :class="{ 'has-background-success-light': todo.done }">
       <div class="card-content">
         <div class="content">
           <div class="todo-title" :class="{ 'has-text-success line-through': todo.done }">
-            {{ todo.content }}
+            {{  todo.content  }}
           </div>
           <div class="todo-actions buttons">
             <button class="button is-small is-light " :class="todo.done ? 'is-success' : 'is-light'"
@@ -57,30 +57,48 @@
 
 <script setup>
 
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
+import { db } from '@/firebase'
+import { collection, getDocs } from "firebase/firestore";
 
-const todos = ref([
+const newTodo = ref('')
+
+const todoLists = ref([
 ])
 
-//todo to be add
-const newTodoContent = ref('')
 
-// Add todo
+// Get todos from firebase
+onMounted(async () => {
+  const querySnapshot = await getDocs(collection(db, "todos"));
+  let fbTodos = []
+  querySnapshot.forEach((doc) => {
+    console.log(doc.data());
+    const todo = {
+      id: doc.id,
+      content: doc.data().content,
+      done: doc.data().done
+    }
+    fbTodos.push(todo)
+  });
+  todoLists.value = fbTodos
+})
+
+// Add todo to firebase
 const addTodo = () => {
   const newTodo = {
     id: uuidv4(),
-    content: newTodoContent.value,
+    content: newTodo.value,
     done: false
   }
-  todos.value.unshift(newTodo)
-  newTodoContent.value = ''
+  todoLists.value.unshift(newTodo)
+  newTodo.value = ''
 }
 
 
 //delete todo
 const deleteTodo = id => {
-  todos.value = todos.value.filter(todo => {
+  todoLists.value = todoLists.value.filter(todo => {
     todo.id !== id
   })
 }
@@ -88,8 +106,11 @@ const deleteTodo = id => {
 //marking done
 const toggleDone = id => {
   console.log()
-  const index = todos.value.findIndex(todo => todo.id === id)
-  todos.value[index].done = !todos.value[index].done
+  const index = todoLists.value.findIndex(todo => todo.id === id)
+  todoLists.value[index].done = !todoLists.value[index].done
 }
+
+
+
 
 </script>
