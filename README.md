@@ -1,6 +1,6 @@
-# vue3-firebase
+# Todo app with Vue 3 and Firebase
 
-![image](https://user-images.githubusercontent.com/69726409/187196706-015c44f7-24e8-4718-8497-c968e96fdd34.png)
+![image](https://user-images.githubusercontent.com/69726409/187548738-f6dd7f8b-3487-46e5-befb-c270883ac871.png)
 
 ## Recommended IDE Setup
 
