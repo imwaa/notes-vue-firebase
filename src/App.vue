@@ -59,17 +59,25 @@
 
 import { ref, onMounted } from 'vue';
 import { db } from '@/firebase'
-import { collection, onSnapshot, addDoc } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  addDoc,
+  doc,
+  deleteDoc,
+  updateDoc
+} from "firebase/firestore";
+
+const todosCollectionRef = collection(db, "todos")
 
 const newTodo = ref('')
 
 const todoLists = ref([
 ])
 
-
 // Get todos from firebase
 onMounted(() => {
-  onSnapshot(collection(db, "todos"), (querySnapshot) => {
+  onSnapshot(todosCollectionRef, (querySnapshot) => {
     const fbTodos = [];
     querySnapshot.forEach((doc) => {
       const todo = {
@@ -85,7 +93,7 @@ onMounted(() => {
 
 // Add todo to firebase
 const addTodo = () => {
-  addDoc(collection(db, "todos"), {
+  addDoc(todosCollectionRef, {
     content: newTodo.value,
     done: false
   });
@@ -94,16 +102,16 @@ const addTodo = () => {
 
 // delete todo from firebase
 const deleteTodo = id => {
-  todoLists.value = todoLists.value.filter(todo => {
-    todo.id !== id
-  })
+  deleteDoc(doc(todosCollectionRef, id));
+
 }
 
-//marking done
+// Updating done task in firebase
 const toggleDone = id => {
-  console.log()
   const index = todoLists.value.findIndex(todo => todo.id === id)
-  todoLists.value[index].done = !todoLists.value[index].done
+  updateDoc(doc(todosCollectionRef, id), {
+    done: !todoLists.value[index].done
+  });
 }
 
 
