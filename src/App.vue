@@ -23,10 +23,14 @@
           <div class="todo-actions buttons">
             <button class="button is-small is-light " :class="todo.done ? 'is-success' : 'is-light'"
               @click="toggleDone(todo.id)">
-              &check;
+              <span class="icon material-symbols-outlined">
+                check
+              </span>
             </button>
             <button @click="deleteTodo(todo.id)" class="button is-small is-danger ml-2">
-              &cross;
+              <span class="icon material-symbols-outlined">
+                close
+              </span>
             </button>
           </div>
         </div>
